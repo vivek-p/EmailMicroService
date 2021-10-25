@@ -11,7 +11,9 @@ const sendMail = async (req: Request, res: Response, next: NextFunction) => {
     let bcc: string = req.body.bcc;
     let subject: string = req.body.subject;
     let body: string = req.body.body;
-    let payload : EmailPayload = new EmailPayload(to, cc, bcc, subject, body);
+    let fileName : string = req.body.fileName ?? '';
+    let filePath : string = req.body.filePath ?? '';
+    let payload : EmailPayload = new EmailPayload(to, cc, bcc, subject, body, fileName, filePath);
     console.log('payload = ', payload);
     // call mail transport
     const mailResp : any = await transportMail(payload, res);

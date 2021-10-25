@@ -13,16 +13,30 @@ export const transportMail = async (payload : EmailPayload, res : Response) => {
            pass: '7aabe53df12300'
         }
     });
-    const message = {
+    const isHTML = RegExp.prototype.test.bind(/(<([^>]+)>)/i);
+    let isHtmlContent : boolean = isHTML(payload.body);
+    let message : any = {
         from: 'sampleuser@mailtrap.com',
-        to: 'to@email.com',
-        subject: 'Design Your custom email',
-        html: '<h1>Have the most fun you can!</h1><p>Get your <b>Career Growth</b> today!</p>',
-        attachments: [
+        to: payload.to,
+        subject: payload.subject,
+    };
+    if(payload.cc) {
+        message.cc = payload.cc;
+    }
+    if(payload.bcc) {
+        message.bcc = payload.bcc;
+    }
+    if(isHtmlContent) {
+        message.html = payload.body;
+    } else {
+        message.text = payload.body;
+    }
+    if(payload.fileName && payload.filePath) {
+        message.attachments = [
             { // Use a URL as an attachment
-              filename: 'your-testla.png',
-              path: 'https://media.gettyimages.com/photos/view-of-tesla-model-s-in-barcelona-spain-on-september-10-2018-picture-id1032050330?s=2048x2048'
-          }
+                filename: payload.fileName,
+                path: payload.filePath
+            }
         ]
     };
     let respCode : number;
