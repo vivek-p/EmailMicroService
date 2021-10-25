@@ -31,13 +31,23 @@ export const transportMail = async (payload : EmailPayload, res : Response) => {
     } else {
         message.text = payload.body;
     }
-    if(payload.fileName && payload.filePath) {
-        message.attachments = [
-            { // Use a URL as an attachment
-                filename: payload.fileName,
-                path: payload.filePath
-            }
-        ]
+    if(payload.fileName && (payload.filePath || payload.fileContent)) {
+        if(payload.fileContent && payload.fileContentType) {
+            message.attachments = [
+                { //Use a content as attachment
+                  filename : payload.fileName,
+                  content : payload.fileContent,
+                  contentType : payload.fileContentType
+                }
+              ]
+        } else if(payload.filePath) {
+            message.attachments = [
+                { // Use a URL as an attachment
+                    filename: payload.fileName,
+                    path: payload.filePath
+                }
+            ]
+        }
     };
     let respCode : number;
     let respMsg : any;
